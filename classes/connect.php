@@ -1,8 +1,8 @@
 <?php
-$dbhost = 'localhost';
+$dbhost = 'host.docker.internal';
 $dbuser = 'root';
-$dbpass = '';
-$dbname = '';
+$dbpass = '1234';
+$dbname = 'dex';
 $conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
 if ($conn->connect_error) {
     die('Connect Error (' . $conn->connect_errno . ') '
