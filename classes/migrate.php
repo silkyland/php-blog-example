@@ -35,6 +35,7 @@ $sql[] = "CREATE TABLE IF NOT EXISTS categories (
 // create posts table with id, thumbnail, title, content, category_id, created_at, updated_at
 $sql[] = "CREATE TABLE IF NOT EXISTS posts (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(6) UNSIGNED NOT NULL,
     thumbnail VARCHAR(255) NOT NULL DEFAULT 'https://via.placeholder.com/480',
     title VARCHAR(255) NOT NULL,
     content VARCHAR(255) NOT NULL,

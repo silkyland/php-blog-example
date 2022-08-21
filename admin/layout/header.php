@@ -1,3 +1,10 @@
+<?php
+
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+    header('Location: /login.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,6 +15,7 @@
     <title><?php echo $title ?? 'มายเว็บไซต์' ?></title>
     <!-- bootstrap5 cdn -->
     <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/custom.css" rel="stylesheet">
 </head>
 
 <body>
@@ -23,7 +31,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">จัดการข่าวสาร</a>
+                            <a class="nav-link active" aria-current="page" href="/admin/post/index.php">จัดการข่าวสาร</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">จัดการแบนเนอร์</a>
@@ -38,7 +46,7 @@
                 </div>
                 <?php if (isset($_SESSION['user'])) : ?>
                     <div>
-                        สวัสดี, <?php echo $_SESSION['user']['name']; ?>,
+                        สวัสดี, <?php echo $_SESSION['user']['name']; ?> |
                         <a onclick="return confirm('แน่ใจหรือไม่ที่ต้องการออกจากระบบ');" href="logout.php" class="text-decoration-none">ออกจากระบบ</a>
                     </div>
                 <?php endif; ?>
