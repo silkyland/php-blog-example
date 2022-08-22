@@ -20,3 +20,5 @@ if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] == 0) {
     $upload = new Upload('avatar');
     $img_name = $upload->upload($_FILES['avatar']);
 }
+
+
