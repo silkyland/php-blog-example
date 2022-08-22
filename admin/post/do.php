@@ -9,6 +9,15 @@ class PostService
     function __construct($conn)
     {
         $this->conn = $conn;
+        // only admin
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'admin') {
+            // clear all session
+            session_unset();
+            // destroy session
+            session_destroy();
+            header('Location: /admin/login');
+            exit;
+        }
     }
 
     public function create()

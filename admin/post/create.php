@@ -19,7 +19,7 @@ $categories = $result->fetch_all(MYSQLI_ASSOC);
             &lsaquo; ย้อนกลับ</a>
     </div>
 
-    <!-- form input thumbnail, title, contente(text), creategory_id (dropdown) -->
+    <!-- form input avatar, title, contente(text), creategory_id (dropdown) -->
     <div class="card">
         <div class="card-body">
             <!-- flash message -->
@@ -31,8 +31,8 @@ $categories = $result->fetch_all(MYSQLI_ASSOC);
             <?php endif; ?>
             <form action="/admin/post/do.php?create=1" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label class="form-label" for="thumbnail">รูปประจำข่าว</label>
-                    <input type="file" class="form-control-file" id="thumbnail" name="thumbnail" accept="image/*">
+                    <label class="form-label" for="avatar">รูปประจำข่าว</label>
+                    <input type="file" class="form-control-file" id="avatar" name="avatar" accept="image/*">
 
                 </div>
                 <div class="mb-3">
