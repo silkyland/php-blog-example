@@ -32,7 +32,8 @@ $categories = $result->fetch_all(MYSQLI_ASSOC);
             <form action="/admin/post/do.php?create=1" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label class="form-label" for="thumbnail">รูปประจำข่าว</label>
-                    <input type="file" class="form-control-file" id="thumbnail" name="thumbnail">
+                    <input type="file" class="form-control-file" id="thumbnail" name="thumbnail" accept="image/*">
+
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="title">หัวข้อข่าว</label>

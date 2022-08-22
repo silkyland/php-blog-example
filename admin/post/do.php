@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once '../../classes/connect.php';
+require_once '../../classes/upload.php';
+require_once '../../classes/helper.php';
 
 class PostService
 {
@@ -9,9 +11,19 @@ class PostService
         $this->conn = $conn;
     }
 
-    public function create($post)
+    public function create()
     {
-        if (!isset($post['title']) || !isset($post['content']) || !isset($post['category_id'])) {
+        if (isset($_FILES['thumbnail']) && file_exists($_FILES['thumbnail']['tmp_name'])) {
+            $upload = new Upload('posts');
+            $file_name = $upload->upload($_FILES['thumbnail']);
+            $thumbnail = $file_name;
+        }
+        if (
+            !isset($_POST['title']) || $_POST['title'] == '' ||
+            !isset($_POST['content']) || $_POST['content'] == '' ||
+            !isset($_POST['category_id']) || $_POST['category_id'] == ''
+        ) {
+
             $_SESSION['flash'] = [
                 'type' => 'danger',
                 'message' => 'กรุณากรอกข้อมูลให้ครบถ้วน'
@@ -20,12 +32,14 @@ class PostService
             exit;
         }
         $user_id = $_SESSION['user']['id'];
+        $title = $_POST['title'];
+        $content = $_POST['content'];
+        $category_id = $_POST['category_id'];
+        $thumbnail = isset($thumbnail) ? $thumbnail : 'https://via.placeholder.com/600x400';
 
-        $sql = "INSERT INTO posts (title, content, user_id, category_id) VALUES (?, ?, ?, ?)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('ssii', $post['title'], $post['content'], $user_id, $post['category_id']);
-        $stmt->execute();
-        $stmt->close();
+        $sql = "INSERT INTO posts (title, thumbnail, content, user_id, category_id) VALUES ('$title', '$thumbnail', '$content', $user_id, $category_id)";
+        $result = $this->conn->query($sql);
+
 
         $_SESSION['flash'] = [
             'type' => 'success',
@@ -33,67 +47,43 @@ class PostService
         ];
         header('Location: /admin/post/index.php');
     }
+
+    // delete
+    public function delete()
+    {
+        if (!isset($_GET['id'])) {
+            $_SESSION['flash'] = [
+                'type' => 'danger',
+                'message' => 'กรุณากรอกข้อมูลให้ครบถ้วน'
+            ];
+            header('Location: /admin/post/index.php');
+            exit;
+        }
+        $id = $_GET['id'];
+
+        // delete thumbnail is not url
+        $sql = "SELECT thumbnail FROM posts WHERE id = $id";
+        $result = $this->conn->query($sql);
+        $row = $result->fetch_assoc();
+
+        $sql = "DELETE FROM posts WHERE id = $id";
+        $result = $this->conn->query($sql);
+        $_SESSION['flash'] = [
+            'type' => 'success',
+            'message' => 'ลบข้อมูลเรียบร้อย'
+        ];
+        header('Location: /admin/post/index.php');
+    }
 }
+
 
 $post = new PostService($conn);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['create'])) {
+    $post->create($_POST);
+}
 
-    if (isset($_FILES['thumbnail']) && file_exists($_FILES['thumbnail']['tmp_name'])) {
-        $thumbnail = $_FILES['thumbnail'];
-        $thumbnail_name = $thumbnail['name'];
-        $thumbnail_tmp_name = $thumbnail['tmp_name'];
-        $thumbnail_size = $thumbnail['size'];
-        $thumbnail_error = $thumbnail['error'];
-        $thumbnail_type = $thumbnail['type'];
-        $thumbnail_ext = explode('.', $thumbnail_name);
-        $thumbnail_ext = strtolower(end($thumbnail_ext));
-        $thumbnail_allowed_ext = ['jpg', 'jpeg', 'png'];
-        $thumbnail_new_name = uniqid('', true) . '.' . $thumbnail_ext;
-        $thumbnail_destination = '../../uploads/' . $thumbnail_new_name;
-
-        // upload
-        if ($thumbnail_error === 0) {
-            if ($thumbnail_size > 1000000) {
-                $_SESSION['flash'] = [
-                    'type' => 'danger',
-                    'message' => 'ขนาดไฟล์ใหญ่เกินไป'
-                ];
-                header('Location: /admin/post/create.php');
-                exit;
-            }
-            if (!in_array($thumbnail_ext, $thumbnail_allowed_ext)) {
-                $_SESSION['flash'] = [
-                    'type' => 'danger',
-                    'message' => 'ชนิดไฟล์ไม่ถูกต้อง'
-                ];
-                header('Location: /admin/post/create.php');
-                exit;
-            }
-            if (move_uploaded_file($thumbnail_tmp_name, $thumbnail_destination)) {
-                $thumbnail_destination = '/uploads/' . $thumbnail_new_name;
-            } else {
-                $_SESSION['flash'] = [
-                    'type' => 'danger',
-                    'message' => 'ไม่สามารถอัพโหลดไฟล์ได้'
-                ];
-                header('Location: /admin/post/create.php');
-                exit;
-            }
-        } else {
-            $_SESSION['flash'] = [
-                'type' => 'danger',
-                'message' => 'ไม่สามารถอัพโหลดไฟล์ได้'
-            ];
-            header('Location: /admin/post/create.php');
-            exit;
-        }
-    }
-
-    $post->create([
-        'title' => $_POST['title'],
-        'content' => $_POST['content'],
-        'category_id' => $_POST['category_id'],
-        'thumbnail' => $thumbnail_destination ?? null,
-    ]);
+// delete
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete'])) {
+    $post->delete();
 }
