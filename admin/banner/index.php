@@ -1,18 +1,20 @@
 <?php
 session_start();
+
 require_once '../../classes/core.php';
 
+$title = "จัดการแบนเนอร์";
 
-$title = "จัดการข่าว";
 require_once '../layout/header.php';
 
 ?>
+
 <div class="container">
     <div class="h-5 d-flex ps-1 align-items-center justify-content-between">
         <h1 class="text-2xl font-bold text-gray-800">
             <?php echo $title; ?>
         </h1>
-        <a href="/admin/post/create.php" class="btn btn-primary ">+ เพิ่มข่าวสาร</a>
+        <a href="/admin/banner/create.php" class="btn btn-primary ">+ เพิ่ม Banner</a>
     </div>
     <!-- if has flash -->
     <?php if (isset($_SESSION['flash'])) : ?>
@@ -21,20 +23,20 @@ require_once '../layout/header.php';
             <?php unset($_SESSION['flash']); ?>
         </div>
     <?php endif; ?>
+
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>#</th>
-                <th>thumbnail</th>
-                <th>หัวข้อ</th>
-                <th>หมวดหมู่</th>
-                <th>ผู้เขียน</th>
+                <th>รูป</th>
+                <th>ชื่อ</th>
+                <th>ลิงค์</th>
                 <th class="text-end">จัดการ</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT p.id id, p.thumbnail, p.title, c.name category_name, u.name user_name FROM posts p LEFT JOIN users u ON p.user_id = u.id LEFT JOIN categories c ON p.category_id = c.id";
+            $sql = "SELECT * FROM banners";
             $result = $conn->query($sql);
             $i = 1;
             while ($row = $result->fetch_assoc()) {
@@ -42,24 +44,20 @@ require_once '../layout/header.php';
                 <tr>
                     <td><?php echo $i; ?></td>
                     <td>
-                        <?php if ($row['thumbnail']) : ?>
-                            <img src="<?php echo isUrl($row['thumbnail']) ? $row['thumbnail'] : '/uploads/' . $row['thumbnail']; ?>" alt="<?php echo $row['title']; ?>" width="100">
+                        <?php if ($row['image']) : ?>
+                            <img src="<?php echo isUrl($row['image']) ? $row['image'] : '/uploads/' . $row['image']; ?>" alt="<?php echo $row['title']; ?>" width="100">
                         <?php endif; ?>
                     </td>
-                    <td><?php echo $row['title']; ?></td>
-                    <td><?php echo $row['category_name']; ?></td>
-                    <td><?php echo $row['user_name']; ?></td>
+                    <td><?php echo $row['name']; ?></td>
+                    <td><?php echo $row['link']; ?></td>
                     <td class="text-end">
-                        <a href="/admin/post/edit.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">แก้ไข</a>
-                        <a href="/admin/post/do.php?delete=1&id=<?php echo $row['id']; ?>" class="btn btn-danger">ลบ</a>
+                        <a href="/admin/banner/edit.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">แก้ไข</a>
+                        <a href="/admin/banner/delete.php?id=<?php echo $row['id']; ?>" class="btn btn-danger">ลบ</a>
                     </td>
                 </tr>
             <?php
                 $i++;
             } ?>
-        </tbody>
+            </thead>
     </table>
 </div>
-
-<?php
-require_once '../layout/footer.php';

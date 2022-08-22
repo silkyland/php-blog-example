@@ -34,10 +34,10 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
                             <a class="nav-link active" aria-current="page" href="/admin/post/index.php">จัดการข่าวสาร</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">จัดการแบนเนอร์</a>
+                            <a class="nav-link" href="/admin/banner/index.php">จัดการแบนเนอร์</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">จัดการผู้ใช้งาน</a>
+                            <a class="nav-link" href="/admin/user/index.php">จัดการผู้ใช้งาน</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">จัดการกระดานเยี่ยมชม</a>
