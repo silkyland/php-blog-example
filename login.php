@@ -8,6 +8,11 @@ require_once './layout/header.php';
 
 $hasError = "";
 
+// redirect if user is already logged in
+if (isset($_SESSION['user'])) {
+    header('Location: /admin');
+}
+
 // if method is post
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
